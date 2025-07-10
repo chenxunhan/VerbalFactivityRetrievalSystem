@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>叙实性动词语料库检索系统</title>
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='imgs/bg.png') }}");
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        img {
+            width: 5cm;
+            height: auto;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+       .title {
+            color: black;
+            font-weight: bold;
+            font-size: 25px;
+            margin-bottom: 10px;
+        }
+
+       .list {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+       .list-button {
+            display: flex;
+            margin-left: 20px;
+        }
+
+       .list-button button {
+            width: 3cm;
+            border: none;
+            padding: 10px;
+            margin-left: 10px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+        }
+
+       .search {
+            display: flex;
+            align-items: center;
+        }
+
+       .search input {
+            width: 10cm;
+            padding: 10px;
+            margin-left: 10px;
+            border: 1px solid #ccc;
+        }
+
+       .search button {
+            border: none;
+            padding: 10px;
+            margin-left: 10px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .judge {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px auto; /* 水平居中 */
+        }
+
+        .judge div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .judge input {
+            width: 10cm;
+            padding: 5px;
+            margin-left: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .judge button {
+            border: none;
+            padding: 10px;
+            margin-left: 10px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+        }
+
+    </style>
+    <script>
+        function search() {
+            var verb = document.getElementById('search-input').value;
+            window.location.href = '/search_factive_verb?verb=' + verb;
+        }
+
+        function judge() {
+            var sentence = document.getElementById('sentence-input').value;
+            var verb = document.getElementById('verb-input').value;
+            var clause = document.getElementById('clause-input').value;
+            window.location.href = '/judge_clause_value?sentence=' + sentence + '&verb=' + verb + '&clause=' + clause;
+        }
+    </script>
+</head>
+
+<body>
+    <a href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='imgs/logo.png') }}" alt="Logo">
+    </a>
+    <p class="title">叙实性动词语料库检索系统</p>
+    <div class="list">
+        <span>叙实性动词一览：</span>
+        <div class="list-button"> 
+            <a href="{{ url_for('show_list_factive_words', word_type='正叙实动词') }}"><button>正叙实动词</button></a>
+            <a href="{{ url_for('show_list_factive_words', word_type='反叙实动词') }}"><button>反叙实动词</button></a>
+            <a href="{{ url_for('show_list_factive_words', word_type='非叙实动词') }}"><button>非叙实动词</button></a>
+            <a href="{{ url_for('show_list_factive_words', word_type='总表') }}"><button>总表</button></a>
+        </div>
+    </div>
+    
+    <div class="search">
+        <span>叙实性动词检索：</span>
+        <input type="text" placeholder="请输入叙实性动词" id="search-input">
+        <button onclick="search()">检索</button>
+    </div>
+
+    <div class="judge">
+        <span>预设真假值判断：</span>
+        <div>
+            <input type="text" placeholder="请输入主句/语境" id="sentence-input">
+            <input type="text" placeholder="请输入主句/语境中叙实性动词" id="verb-input">
+            <input type="text" placeholder="请输入假设句/预设句/宾语小句" id="clause-input">
+        </div>
+        <button onclick="judge()">判断</button>
+    </div>
+    
+    <p class="bold">介绍：</p>
+    <p>1. 本系统功能包含检索叙实性动词并展示其叙实性和例句；</br>2. 展示叙实性动词列表；</br>3. 判断指定句子语境下，叙实性动词预设的宾语小句真假值。</p>
+    </p>
+    <p class="bold">作者：陈逊瀚</p>
+
+</body>
+
+</html>

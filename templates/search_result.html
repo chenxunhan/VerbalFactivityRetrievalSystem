@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ verb }} 检索结果</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='imgs/bg.png') }}");
+            background-size: cover;
+        }
+
+        img {
+            width: 5cm;
+            height: auto;
+            display: block;
+            margin: 1.5cm auto 20px;
+        }
+
+        .title {
+            color: black;
+            font-weight: bold;
+            font-size: 25px;
+            text-align: center;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        th {
+            font-weight: bold;
+        }
+
+        td,
+        th {
+            text-align: center;
+        }
+
+        .list {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+       .list-button {
+            display: flex;
+            align-items: center;
+            margin-left: 20px;
+        }
+
+       .list-button button {
+            width: 6cm;
+            border: none;
+            padding: 10px;
+            margin-left: 10px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+        }
+
+        .list-button2 button {
+            width: 3cm;
+            border: none;
+            padding: 10px;
+            margin-left: 10px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='imgs/logo.png') }}" alt="Logo">
+    </a>
+    <div class="container mt-5">
+        {{ head_html|safe }}
+        {% if head_html %}
+        <div class="list">
+            <div class="list-button">
+                <button onclick="filterResults('all')">看所有例句</button>
+                <button onclick="filterResults('no_object_clause')">仅看无宾语小句例句</button>
+                <button onclick="filterResults('has_object_clause')">仅看有宾语小句例句</button>
+                <button onclick="filterResults('clause_true')">仅看宾语小句为真例句</button>
+                <button onclick="filterResults('clause_false')">仅看宾语小句为假例句</button>
+                <button onclick="filterResults('clause_unknown')">仅看宾语小句真假未知例句</button>
+            </div>
+        </div>
+        <div class="list">
+            <div id="note">若对例句的 宾语小句识别 或 对应真假性结果 不满，可选择对应例句重问在线LLM。状态：未选中</div>
+            <div class="list-button2">
+                <button onclick="callAPI('豆包')">豆包</button>
+                <button onclick="callAPI('deepseek')">deepseek</button>
+                <button onclick="callAPI('千问')">千问</button>
+                <button onclick="callAPI('GPT-4')">GPT-4</button>
+            </div>
+        </div>
+        {% endif %}
+        {{ main_html|safe }}
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function filterResults(filterType) {
+            const verb = "{{ verb }}";
+            const url = `/search_factive_verb?verb=${verb}&filter=${filterType}`;
+            window.location.href = url;
+        }
+
+        function callAPI(model) {
+            const selectedRow = document.querySelector('input[name="selected_row"]:checked');
+            if (selectedRow) {
+                const row = selectedRow.closest('tr');
+                const cells = row.querySelectorAll('td');
+                const sentence = cells[2].textContent;
+                const verb = "{{ verb }}";
+                const clause = cells[3].textContent;
+                const url = `/rejudge?sentence=${encodeURIComponent(sentence)}&verb=${encodeURIComponent(verb)}&api_llm=${encodeURIComponent(model)}`;
+                window.location.href = url;
+            } else {
+                alert('请先选中对应例句行');
+            }
+        }
+
+        const radioButtons = document.querySelectorAll('input[name="selected_row"]');
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', function () {
+                const noteDiv = document.getElementById('note');
+                if (this.checked) {
+                    noteDiv.textContent = '若对例句的 宾语小句识别 或 对应真假性结果 不满，可选择对应例句重问在线LLM。状态：已选中';
+                } else {
+                    const anyChecked = Array.from(radioButtons).some(btn => btn.checked);
+                    if (!anyChecked) {
+                        noteDiv.textContent = '若对例句的 宾语小句识别 或 对应真假性结果 不满，可选择对应例句重问在线LLM。状态：未选中';
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
